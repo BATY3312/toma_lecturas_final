@@ -1,0 +1,42 @@
+{% extends 'layout.html' %}
+{% block titulo %} EDITAR MICROMEDIDOR {% endblock %}
+{% block section %}
+<div class="form-container">
+ <div class="form-background">
+   <div class="card text-start">
+    <div class="card-body">
+        <h4 class="card-title">Editar Micromedidor</h4>
+        <div class="mb-3">
+            <form enctype="multipart/form-data" method="post">
+                {% csrf_token %}
+                <div class="col-md-4">
+                    <div class="form-group">
+                     <label class="form-label">NUID:</label>
+                     <input type="text" class="form-control {% if formulario.nuid.errors %}is-invalid{% endif %}" name="nuid" value="{{ formulario.nuid.value }}" required> 
+                     {% if formulario.nuid.errors %}
+                        <div class="invalid-feedback">{{ formulario.nuid.errors|join:", " }}</div>
+                     {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                     <label class="form-label">Medidor:</label>
+                     <input type="text" class="form-control {% if formulario.medidor.errors %}is-invalid{% endif %}" name="medidor" value="{{ formulario.medidor.value }}" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                     <label class="form-label" for="id_fecha_instalacion">Fecha de Instalación:</label>
+                     <input type="date" name="fecha_instalacion" class="form-control {% if formulario.fecha_instalacion.errors %}is-invalid{% endif %}" id="id_fecha_instalacion" value="{{ formulario.fecha_instalacion.value |date:'Y-m-d'}}" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+     </div>
+  </div>
+ </div>
+</div>
+{% endblock %}

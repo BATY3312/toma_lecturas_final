@@ -1,0 +1,97 @@
+/* Navbar Styles */
+.navbar {
+    background-color: #f8f9fa !important; /* Light grey background for a subtle look */
+    border-bottom: 1px solid #dee2e6; /* Add a subtle border at the bottom */
+}
+
+.navbar-brand img {
+    margin-right: 15px; /* Slightly increased space between the logo and text */
+}
+
+.nav-item {
+    margin-left: 20px; /* Increased margin for better spacing */
+}
+
+.nav-link {
+    color: #343a40 !important; /* Dark grey text for a modern look */
+    transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+.nav-link:hover {
+    color: #007bff !important; /* Blue color on hover for better visibility */
+}
+
+/* User Info Styles */
+.navbar-text {
+    color: #343a40 !important; /* Ensure the user text is dark grey */
+    display: flex;
+    align-items: center;
+    padding: 5px 15px; /* Increased padding for a more comfortable look */
+    background-color: #e9ecef; /* Light background for the user info section */
+    border-radius: 5px; /* Rounded corners for a modern touch */
+}
+
+.navbar-text i {
+    margin-right: 8px; /* Increased space between the icon and the username */
+    color: #007bff; /* Blue icon for a consistent theme */
+}
+
+/* General Container Styling */
+.full-width-container {
+    min-height: 100vh; /* Ensure the body takes full height */
+    display: flex;
+    flex-direction: column;
+}
+
+.content-container {
+    flex: 1; /* Ensure header and footer stay in place while content grows */
+}
+
+/* Footer Styles */
+footer {
+    background-color: #f8f9fa; /* Light grey background to match the navbar */
+    padding: 15px 0; /* Padding for a more spacious footer */
+    text-align: center; /* Centered text for a clean look */
+    border-top: 1px solid #dee2e6; /* Subtle border to separate from main content */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 767.98px) {
+    .navbar-brand img {
+        width: 150px; /* Adjust logo size for smaller screens */
+        height: auto;
+    }
+
+    .navbar-text {
+        padding: 5px 10px; /* Reduce padding for smaller screens */
+    }
+}
+/* css para ajustar la pantalla de una manera responisa*/
+.full-width-container {
+    width: 100%;
+}
+
+.content-container {
+    width: 100%;
+    max-width: 1600px; /* Incrementa el ancho máximo */
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Ajuste específico para pantallas portátiles y más pequeñas */
+@media (max-width: 1200px) {
+    .content-container {
+        max-width: 1000px; /* Ancho ajustado para portátiles */
+    }
+}
+
+@media (max-width: 767.98px) {
+    .navbar .navbar-nav {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .content-container {
+        padding: 10px; /* Reduce el padding en dispositivos móviles */
+    }
+}

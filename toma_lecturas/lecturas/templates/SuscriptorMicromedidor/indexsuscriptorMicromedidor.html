@@ -1,38 +1,51 @@
-{% extends 'layout.html' %}
-{% block titulo %} INDEX SUSCRIPTORES DE MICROMEDIDORES {% endblock %}
-{% block section %}
-<div class="card text-start">
-    <div class="card-body">
-        <h4 class="card-title">Suscriptores de Micromedidores</h4>
-        <p class="card-text">
-            {% if perms.lecturas.add_suscriptormicromedidor %}
-                <a class="btn btn-success" href="{% url 'crearsuscriptormicromedidor' %}" role="button">Crear Suscriptor de Micromedidor</a>
-            {% endif %}
-        </p>
+{% extends 'nav.html' %}
 
-        <div class="table-responsive"> 
-            <table id="tablaSuscriptoresMicromedidores" class="table table-striped table-borderless table-primary align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Suscriptor</th>
-                        <th>Micromedidor</th>
-                        <th>Opciones</th>
-                    </tr>
-                </thead>
-                <tbody class="table-group-divider">
+{% load static %}
+
+{% block title %}Suscriptores de Micromedidores{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container mt-4">
+        <div class="card text-start">
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">Suscriptores de Micromedidores</h4>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="rectangle-black">
+                        {% if perms.lecturas.add_suscriptormicromedidor %}
+                            <a class="btn btn-success mb-3" href="{% url 'crearsuscriptormicromedidor' %}" role="button">Crear Suscriptor de Micromedidor</a>
+                        {% endif %}
+                    </div>
+                    <div class="rectangle-pink">
+                        <div class="search-bar input-group">
+                            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por NUID o Nombre de Usuario">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="searchButton"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="suscriptores-container">
                     {% for suscriptor_micromedidor in suscriptormicromedidor %}
-                    <tr class="table-primary">
-                        <td>{{ suscriptor_micromedidor.id }}</td>
-                        <td>{{ suscriptor_micromedidor.suscriptor.primer_nombre }} {{ suscriptor_micromedidor.suscriptor.segundo_nombre }} {{ suscriptor_micromedidor.suscriptor.primer_apellido }}   </td>
-                        <td>{{ suscriptor_micromedidor.micromedidor.medidor }}</td>
-                        <td>
-                            <a class="btn btn-primary" href="{% url 'editarsuscriptormicromedidor' suscriptor_micromedidor.id %}" role="button">Editar</a>
-                            {% if perms.lecturas.delete_suscriptormicromedidor %}
+                    <div class="col-md-3 mb-4 suscriptor-card">
+                        <div class="card">
+                            <img src="{{ suscriptor_micromedidor.suscriptor.direccion_IMAGEN.url }}" class="card-img-top" alt="Imagen del suscriptor">
+                            <div class="card-body">
+                                <h5 class="card-title">NUID: {{ suscriptor_micromedidor.micromedidor.nuid }}</h5>
+                                <p class="card-text">
+                                    {{ suscriptor_micromedidor.suscriptor.primer_nombre }} 
+                                    {{ suscriptor_micromedidor.suscriptor.segundo_nombre }} 
+                                    {{ suscriptor_micromedidor.suscriptor.primer_apellido }}
+                                    {{suscriptor_micromedidor.suscriptor.barrio.Barrio.barrio}}
+                                    {{ suscriptor_micromedidor.suscriptor.barrio.barrio }}
+                                </p>
+                                <a href="{% url 'editarsuscriptormicromedidor' suscriptor_micromedidor.id %}" class="btn btn-primary">Editar</a>
+                                {% if perms.lecturas.delete_suscriptormicromedidor %}
                                 <a id="eliminar_{{ suscriptor_micromedidor.id }}" class="btn btn-danger" href="{% url 'eliminarsuscriptormicromedidor' suscriptor_micromedidor.id %}" role="button">Eliminar</a>
-                            {% endif %}
-                        </td>
-                    </tr>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
                     <script>
                         document.getElementById('eliminar_{{ suscriptor_micromedidor.id }}').addEventListener('click', function() {
                             if (confirm('¿Estás seguro de que deseas eliminar este suscriptor de micromedidor?')) {
@@ -40,25 +53,43 @@
                             }
                         });
                     </script>
-                    {% endfor %} 
-                </tbody>
-                <tfoot></tfoot>
-            </table>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Agrega las referencias y el script de DataTables -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
-<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Agregar evento de clic a todas las tarjetas
+            $('.suscriptor-card').click(function() {
+                // Obtener el ID del suscriptor desde el atributo data-id
+                var suscriptorId = $(this).data('id');
+                // Redirigir a la página crearlectura con el ID del suscriptor en la URL
+                window.location.href = "{% url 'crearlectura' %}?suscriptor_id=" + suscriptorId;
+            });
 
-<script>
-    // Inicializa la tabla con DataTables
-    $(document).ready(function() {
-        $('#tablaSuscriptoresMicromedidores').DataTable();
-    });
-</script>
+            $('#searchInput').on('keyup', function() {
+                var value = $(this).val().toLowerCase();
+                filterCards(value);
+            });
 
+            $('#searchButton').click(function() {
+                var value = $('#searchInput').val().toLowerCase();
+                filterCards(value);
+            });
+
+            function filterCards(value) {
+                $('.suscriptor-card').filter(function() {
+                    $(this).toggle(
+                        $(this).find('.card-title').text().toLowerCase().indexOf(value) > -1 ||
+                        $(this).find('.card-text').text().toLowerCase().indexOf(value) > -1
+                    );
+                });
+            }
+        });
+    </script>
+</body>
 {% endblock %}
-

@@ -1,48 +1,66 @@
 {% extends 'layout.html' %}
 {% block titulo %} CREAR LECTURA {% endblock %}
 {% block section %}
+<style>
+    input[readonly] {
+    background-color: #e9ecef;
+    color: #495057;
+    cursor: not-allowed;
+}
+</style>
 <div class="form-container">
     <div class="form-background">
         <div class="card text-start">
             <div class="card-body">
-                <h4 class="card-title">Crear Lectura</h4>
+                <h4 class="card-title font-weight-bold">Registrar lectura</h4>
+                {% if error_message %}
+                    <div class="alert alert-danger">{{ error_message }}</div>
+                {% endif %}
                 <div class="mb-3">
-                    <form enctype="multipart/form-data" method="post">
+                    <form enctype="multipart/form-data" method="post" id="lecturaForm">
                         {% csrf_token %}
                         <div class="form-group">
-                            <label class="form-label">Suscriptor Micromedidor:</label>
-                            <select name="suscriptor_micromedidor" class="form-control" id="id_suscriptor_micromedidor">
-                                {% for suscriptor_micromedidor in suscriptores_micromedidores %}
-                                    <option value="{{ suscriptor_micromedidor.id }}">{{ suscriptor_micromedidor.suscriptor.primer_nombre }} {{suscriptor_micromedidor.suscriptor.segundo_nombre}} {{suscriptor_micromedidor.suscriptor.primer_apellido}} {{suscriptor_micromedidor.micromedidor.medidor}}</option>
-                                {% endfor %}
-                            </select>
+                            <label class="form-label font-weight-bold">Suscriptor Micromedidor:</label>
+                            <input type="text" id="suscriptor_search" class="form-control" placeholder="Buscar suscriptor micromedidor..." oninput="filtrarSuscriptores()">
+                            <div class="dropdown" style="position: relative;">
+                                <select name="suscriptor_micromedidor" class="form-control mt-2" id="id_suscriptor_micromedidor" size="5" style="display: none;">
+                                    {% for suscriptor_micromedidor in suscriptores_micromedidores %}
+                                    <option value="{{ suscriptor_micromedidor.id }}"> {{suscriptor_micromedidor.micromedidor.medidor}} </option>
+                                    {% endfor %}
+                                </select>
+                                <div id="suscriptor_dropdown" class="dropdown-menu" style="width: 100%; max-height: 200px; overflow-y: auto;">
+                                    {% for suscriptor_micromedidor in suscriptores_micromedidores %}
+                                        <div class="dropdown-item" data-value="{{ suscriptor_micromedidor.id }}">{{ suscriptor_micromedidor.suscriptor.primer_nombre }} {{ suscriptor_micromedidor.suscriptor.segundo_nombre }} {{ suscriptor_micromedidor.suscriptor.primer_apellido }} {{ suscriptor_micromedidor.micromedidor.medidor }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row mb-2">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Lectura Actual:</label>
+                                    <label class="form-label font-weight-bold">Lectura Actual:</label>
                                     <input type="number" name="lectura_actual" class="form-control" id="id_lectura_actual" required>
                                 </div>
                             </div>
 
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Lectura Anterior:</label>
-                                    <input type="number" name="lectura_anterior" class="form-control" id="id_lectura_anterior" readonly>
+                                    <label class="form-label font-weight-bold">Lectura Anterior:</label>
+                                    <input type="number" name="lectura_anterior" class="form-control" id="id_lectura_anterior" readonly >
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Consumo Total:</label>
+                            <label class="form-label font-weight-bold">Consumo Total:</label>
                             <input type="number" name="consumototal" class="form-control" id="id_consumototal" readonly>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Tipo de Lectura:</label>
+                                    <label class="form-label font-weight-bold">Tipo de Lectura:</label>
                                     <select name="tipo_lectura" class="form-control">
                                         {% for tipo, label in form.tipo_lectura.field.choices %}
                                             <option value="{{ tipo }}">{{ label }}</option>
@@ -52,7 +70,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Estado del Micromedidor:</label>
+                                    <label class="form-label font-weight-bold">Estado del Micromedidor:</label>
                                     <select name="estado_micromedidor" class="form-control">
                                         {% for estado, label in form.estado_micromedidor.field.choices %}
                                             <option value="{{ estado }}">{{ label }}</option>
@@ -65,31 +83,31 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Mes Anterior:</label>
+                                    <label class="form-label font-weight-bold">Mes Anterior:</label>
                                     <input type="text" name="mes_anterior" class="form-control" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="form-label">Mes Actual:</label>
+                                    <label class="form-label font-weight-bold">Mes Actual:</label>
                                     <input type="text" name="mes_actual" class="form-control" readonly>
                                 </div>
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Fecha de Lectura:</label>
+                            <label class="form-label font-weight-bold">Fecha de Lectura:</label>
                             <input type="text" name="FechaLectura" class="form-control" id="id_fechalectura" readonly>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Observaciones:</label>
-                            <textarea name="Observaciones" class="form-control"></textarea>
+                            <label class="form-label font-weight-bold">Observaciones:</label>
+                            <textarea name="observaciones" class="form-control"></textarea>
                         </div>
 
                         <div class="mb-3">
                             <button type="button" class="btn btn-primary" onclick="calcularConsumoTotal()">Calcular Consumo Total</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">Guardar</button>
                         </div>
                     </form>
                 </div>
@@ -98,9 +116,6 @@
     </div>
 </div>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var now = new Date();
@@ -134,11 +149,58 @@
         }
     }
 
-    $(document).ready(function() {
-        $('#id_suscriptor_micromedidor').select2({
-            placeholder: 'Seleccione un suscriptor micromedidor',
-            allowClear: true
-        });
+    document.getElementById('lecturaForm').addEventListener('submit', function(event) {
+        var consumoTotal = parseInt(document.getElementById('id_consumototal').value);
+        if (consumoTotal < 0) {
+            event.preventDefault();
+            alert('El consumo total no puede ser negativo. Por favor, revisa los valores ingresados.');
+        }
+    });
+
+    function filtrarSuscriptores() {
+        var filter = document.getElementById('suscriptor_search').value.toLowerCase();
+        var dropdown = document.getElementById('suscriptor_dropdown');
+        var items = dropdown.getElementsByClassName('dropdown-item');
+
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            var text = item.textContent.toLowerCase();
+
+            if (text.indexOf(filter) > -1) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        }
+    }
+
+    document.getElementById('suscriptor_dropdown').addEventListener('click', function(event) {
+        if (event.target && event.target.matches('.dropdown-item')) {
+            var selectedValue = event.target.getAttribute('data-value');
+            var select = document.getElementById('id_suscriptor_micromedidor');
+            var options = select.options;
+
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value == selectedValue) {
+                    options[i].selected = true;
+                    break;
+                }
+            }
+
+            document.getElementById('suscriptor_search').value = event.target.textContent;
+            event.target.parentNode.style.display = 'none'; // Hide dropdown after selection
+        }
+    });
+
+    document.getElementById('suscriptor_search').addEventListener('focus', function() {
+        document.getElementById('suscriptor_dropdown').style.display = 'block'; // Show dropdown on focus
+    });
+
+    document.addEventListener('click', function(event) {
+        var isClickInside = document.getElementById('suscriptor_search').contains(event.target) || document.getElementById('suscriptor_dropdown').contains(event.target);
+        if (!isClickInside) {
+            document.getElementById('suscriptor_dropdown').style.display = 'none'; // Hide dropdown if clicked outside
+        }
     });
 </script>
 {% endblock %}

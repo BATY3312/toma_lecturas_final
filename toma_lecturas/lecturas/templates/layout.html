@@ -10,14 +10,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'css/lay.css' %}">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <!-- DataTables CSS -->
-<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">-->
+ <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
 
 
 </head>
@@ -50,10 +49,13 @@
                 <a class="nav-link text-dark" href="{% url 'indexmicromedidor' %}">Micromedidor</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-dark" href="{% url 'indexsuscriptorMicromedidor' %}">Usuario y Micromedidor</a>
+                <a class="nav-link text-dark" href="{% url 'indexsuscriptorMicromedidor' %}">Propietario Medidor</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link text-dark" href="{% url 'informe' %}">Ver reportes</a> 
+                <a class="nav-link text-dark" href="{% url 'informe' %}">Reportes</a> 
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-dark" href="{% url 'historial_lecturas' %}">Historial lecturas</a> 
               </li>
               <li class="nav-item">
                 <a class="nav-link text-dark" href="{% url 'exit' %}">Salir</a>
@@ -87,8 +89,8 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.12.3.js"></script> 
  
-<!--  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>-->
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script>
 </body>
 
 </html>

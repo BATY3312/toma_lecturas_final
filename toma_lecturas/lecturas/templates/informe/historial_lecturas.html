@@ -1,0 +1,159 @@
+{% extends 'layout.html' %}
+
+{% load static %}
+
+{% block titulo %} Historial de Lecturas por Suscriptor {% endblock %}
+
+{% block section %}
+<div class="container mt-4">
+    <h2 class="text-center">Historial de Lecturas por Suscriptor</h2>
+    
+    <form method="get" class="mb-4">
+        <div class="form-group">
+            <label for="suscriptor_search">Buscar Suscriptor:</label>
+            <input type="text" id="suscriptor_search" class="form-control" placeholder="Buscar suscriptor..." oninput="filtrarSuscriptores()">
+            <div class="dropdown mt-2" style="position: relative;">
+                <select name="suscriptor_id" id="suscriptor_id" class="form-control d-none" size="5">
+                    {% for suscriptor in suscriptores %}
+                    <option value="{{ suscriptor.id }}" {% if suscriptor.id|stringformat:"s" == suscriptor_seleccionado %}selected{% endif %}>
+                        {{ suscriptor.primer_nombre }} {{ suscriptor.segundo_nombre }} {{ suscriptor.primer_apellido }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div id="suscriptor_dropdown" class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto;">
+                    {% for suscriptor in suscriptores %}
+                        <div class="dropdown-item" data-value="{{ suscriptor.id }}">
+                            {{ suscriptor.primer_nombre }} {{ suscriptor.segundo_nombre }} {{ suscriptor.primer_apellido }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group mt-3">
+            <label for="micromedidor_id">Micromedidor:</label>
+            <select name="micromedidor_id" id="micromedidor_id" class="form-control">
+                <option value="">Todos</option>
+                {% for micromedidor in micromedidores %}
+                    <option value="{{ micromedidor.id }}" {% if micromedidor.id|stringformat:"s" == micromedidor_seleccionado %}selected{% endif %}>
+                        {{ micromedidor.medidor }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="year">Año:</label>
+            <select name="year" id="year" class="form-control">
+                <option value="">Todos</option>
+                {% for year in years %}
+                    <option value="{{ year }}" {% if year|stringformat:"s" == year_seleccionado %}selected{% endif %}>{{ year }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Ver Historial</button>
+    </form>
+
+    {% if error_message %}
+        <div class="alert alert-danger">{{ error_message }}</div>
+    {% elif historial %}
+        {% for entry in historial %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Suscriptor: {{ entry.suscriptor.primer_nombre }} {{ entry.suscriptor.segundo_nombre }} {{ entry.suscriptor.primer_apellido }}</h5>
+                </div>
+                <div class="card-body">
+                    {% for suscriptor_lecturas in entry.lecturas_por_suscriptor %}
+                        <h6>Micromedidor: {{ suscriptor_lecturas.suscriptor_micromedidor.micromedidor.medidor }}</h6>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Mes Anterior</th>
+                                        <th>Mes Actual</th>
+                                        <th>Lectura Anterior</th>
+                                        <th>Lectura Actual</th>
+                                        <th>Consumo Total</th>
+                                        <th>Fecha de Lectura</th>
+                                        <th>Tipo de Lectura</th>
+                                        <th>Estado del Micromedidor</th>
+                                        <th>Observaciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for lectura in suscriptor_lecturas.lecturas %}
+                                        <tr>
+                                            <td>{{ lectura.mes_anterior }}</td>
+                                            <td>{{ lectura.mes_actual }}</td>
+                                            <td>{{ lectura.lectura_anterior }}</td>
+                                            <td>{{ lectura.lectura_actual }}</td>
+                                            <td>{{ lectura.consumototal }}</td>
+                                            <td>{{ lectura.FechaLectura|date:"d-m-Y H:i" }}</td>
+                                            <td>{{ lectura.get_tipo_lectura_display }}</td>
+                                            <td>{{ lectura.get_estado_micromedidor_display }}</td>
+                                            <td>{{ lectura.observaciones }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script>
+function filtrarSuscriptores() {
+    var input = document.getElementById('suscriptor_search');
+    var filter = input.value.toLowerCase();
+    var dropdown = document.getElementById('suscriptor_dropdown');
+    var dropdownItems = dropdown.getElementsByClassName('dropdown-item');
+    
+    for (var i = 0; i < dropdownItems.length; i++) {
+        var txtValue = dropdownItems[i].textContent || dropdownItems[i].innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            dropdownItems[i].style.display = "";
+        } else {
+            dropdownItems[i].style.display = "none";
+        }
+    }
+
+    dropdown.style.display = 'block';
+}
+
+document.addEventListener('click', function(event) {
+    var isClickInside = document.getElementById('suscriptor_search').contains(event.target) || document.getElementById('suscriptor_dropdown').contains(event.target);
+    if (!isClickInside) {
+        document.getElementById('suscriptor_dropdown').style.display = 'none'; // Hide dropdown if clicked outside
+    }
+});
+
+document.getElementById('suscriptor_search').addEventListener('focus', function() {
+    document.getElementById('suscriptor_dropdown').style.display = 'block'; // Show dropdown on focus
+});
+
+document.getElementById('suscriptor_dropdown').addEventListener('click', function(event) {
+    if (event.target && event.target.matches('.dropdown-item')) {
+        var selectedValue = event.target.getAttribute('data-value');
+        var select = document.getElementById('suscriptor_id');
+        var options = select.options;
+
+        for (var i = 0; i < options.length; i++) {
+            if (options[i].value == selectedValue) {
+                options[i].selected = true;
+                break;
+            }
+        }
+
+        document.getElementById('suscriptor_search').value = event.target.textContent;
+        document.getElementById('suscriptor_dropdown').style.display = 'none'; // Hide dropdown after selection
+
+        // Trigger form submission to update micromedidor dropdown
+        document.getElementById('suscriptor_id').form.submit();
+    }
+});
+</script>
+{% endblock %}

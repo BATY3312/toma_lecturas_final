@@ -24,6 +24,8 @@ urlpatterns = [
     path('Suscriptor/crearsuscriptor',views.crearsuscriptor,name="crearsuscriptor"),
     path('Suscriptor/editarsuscriptor/<int:id>/',views.editarsuscriptor,name="editarsuscriptor"),
     path('Suscriptor/eliminarsuscriptor/<int:id>/',views.eliminarsuscriptor,name="eliminarsuscriptor"),
+    ##para detalles suscriptor##
+    path('detalles_suscriptor/<int:id>/', views.detalles_suscriptor, name='detallessuscriptor'),
 
 
     path('SuscriptorMicromedidor/indexsuscriptorMicromedidor',views.indexsuscriptormicromedidor,name='indexsuscriptorMicromedidor') ,
@@ -36,10 +38,15 @@ urlpatterns = [
     path('Lectura/editarlectura/<int:id>/',views.editarlectura,name="editarlectura"),
     path('Lectura/eliminarlectura/<int:id>/',views.eliminarlectura,name="eliminarlectura"), 
 
+    ###############detalle de lectura######
+    path('lectura/detalle/<int:id>/', views.detalle_lectura, name='detallelectura'),
+
     path('api/lectura-anterior/<int:suscriptor_id>/', views.obtener_lectura_anterior_api, name='obtener_lectura_anterior_api'),
     
     path('informe/informe', views.verinforme, name='informe'), 
      path('Lectura/descargar/', views.descargar_csv, name='descargar_csv'),
+     path('informe/historial_lecturas', views.historial_lecturas, name='historial_lecturas'),
+    # path('api/micromedidores/<int:suscriptor_id>/', views.micromedidores_por_suscriptor, name='micromedidores_por_suscriptor'),
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) 
    

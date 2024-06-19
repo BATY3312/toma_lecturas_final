@@ -29,10 +29,10 @@ class Barrio(models.Model):
    
 
 class Suscriptor(models.Model):
-    primer_nombre = models.CharField(max_length=50, verbose_name='Primer Nombre')
-    segundo_nombre = models.CharField(max_length=59, verbose_name='Segundo Nombre')
+    primer_nombre = models.CharField(max_length=50,verbose_name='Primer Nombre')
+    segundo_nombre = models.CharField(max_length=59,blank=True, verbose_name='Segundo Nombre')
     primer_apellido = models.CharField(max_length=50, verbose_name='Primer Apellido')
-    segundo_apellido = models.CharField(max_length=50, verbose_name='Segundo Apellido')
+    segundo_apellido = models.CharField(max_length=50, blank=True,verbose_name='Segundo Apellido')
     barrio = models.ForeignKey(Barrio, on_delete=models.CASCADE, verbose_name='Barrio')
     direccion_IMAGEN = models.ImageField(upload_to='imagenes/', verbose_name='Dirección Imagen')
       # Opciones para el campo 'estrato_socioeconomico'

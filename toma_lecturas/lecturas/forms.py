@@ -54,6 +54,20 @@ class MicromedidorForm(forms.ModelForm):
                 raise forms.ValidationError("El NUID ingresado ya está en uso. Por favor, ingrese un valor único.")
         
         return nuid 
+    
+
+    #verificar si existe un micromedidor en la base de datos
+    def clean_medidor(self):
+        medidor = self.cleaned_data.get('medidor')
+        if Micromedidor.objects.filter(medidor=medidor).exists():
+            instance= getattr(self, 'instance',None)
+            if instance and instance.id:
+               if Micromedidor.objects.exclude(id=instance.id).filter(medidor=medidor).exists():
+                raise forms.ValidationError("El medidor ingresado ya está asociado a otro micromedidor. Por favor, ingrese un medidor válido.")
+            else:
+                raise forms.ValidationError("el valor que ingresaste para medidor ya existe, por favor cambiarlo")
+        return medidor 
+        
 
 
 class SuscriptorMicromedidorForm(forms.ModelForm):
@@ -64,6 +78,18 @@ class SuscriptorMicromedidorForm(forms.ModelForm):
         super(SuscriptorMicromedidorForm, self).__init__(*args, **kwargs)
         self.fields['suscriptor'].queryset = Suscriptor.objects.all()
         self.fields['micromedidor'].queryset = Micromedidor.objects.all() 
+
+    def clean(self):
+        cleaned_data = super().clean()
+        #suscriptor = cleaned_data.get('suscriptor')
+        micromedidor = cleaned_data.get('micromedidor')
+        instance = getattr(self, 'instance', None)
+
+        # Verificar que el micromedidor no esté asociado a otro suscriptor
+        if SuscriptorMicromedidor.objects.filter(micromedidor=micromedidor).exclude(id=instance.id).exists():
+            raise forms.ValidationError('Este micromedidor ya está asociado a otro suscriptor.')
+
+        return cleaned_data
 
 
 class LecturaForm(forms.ModelForm):
@@ -80,6 +106,14 @@ class LecturaForm(forms.ModelForm):
     def clean_lectura_actual(self):
         lectura_actual = self.cleaned_data['lectura_actual']
         return lectura_actual 
+    def clean(self):
+        cleaned_data = super().clean()
+        suscriptor_micromedidor = cleaned_data.get('suscriptor_micromedidor')
+
+        if not suscriptor_micromedidor:
+            raise forms.ValidationError("Suscriptor Micromedidor no encontrado. Por favor, seleccione uno válido.")
+
+        return cleaned_data
         
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Username'}))

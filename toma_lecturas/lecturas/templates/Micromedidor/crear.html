@@ -10,7 +10,7 @@
             <form enctype="multipart/form-data" method="post">
                 {% csrf_token %}
                 <div class="col-md-4 form-group">
-                     <label class="form-label">NUID:</label>
+                     <label class="form-label font-weight-bold">NUID:</label>
                      <input type="text" class="form-control {% if formulario.nuid.errors %} is-invalid {% endif %}" name="nuid" value="{{ formulario.nuid.value }}" required> 
                      {% if formulario.nuid.errors %}
                         <div class="invalid-feedback">{{ formulario.nuid.errors }}</div>
@@ -18,13 +18,16 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                     <label class="form-label">Medidor:</label>
-                     <input type="text" class="form-control" name="medidor" value="{{ formulario.medidor.value }}" required>
-                    <div>
+                     <label class="form-label font-weight-bold">Medidor:</label>
+                     <input type="text" class="form-control {% if formulario.medidor.errors %} is-invalid {% endif %}" name="medidor" value="{{ formulario.medidor.value }}" required> 
+                     {% if formulario.medidor.errors %}
+                        <div class="invalid-feedback">{{ formulario.medidor.errors }}</div>
+                     {% endif %}
+                     
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="form-label">Fecha de Instalación:</label>
+                        <label class="form-label font-weight-bold">Fecha de Instalación:</label>
                         <input type="date" class="form-control" name="fecha_instalacion" value="{{ formulario.fecha_instalacion.value }}" required>
                     </div>
                 </div>

@@ -10,21 +10,21 @@ CREAR SUSCRIPTOR
  <div class="form-background">
   <div class="card text-start">
     <div class="card-body">
-        <h4 class="card-title">Crear Suscriptor</h4>
+        <h4 class="card-title font-weight-bold">Inscribir  Suscriptor</h4>
         <p class="card-text">
             <form enctype="multipart/form-data" method="post">
               {% csrf_token %}
               <fieldset>
                 <div class="row mb-2">
                   <div class="form-group col-md-6">
-                    <label class="form-label">Primer Nombre </label> 
+                    <label class="form-label font-weight-bold">Primer Nombre </label> 
                     <input type="text" name="primer_nombre" class="form-control" id="id_primer_nombre" required>
                   </div>
                   
                  <!-- Segundo nombre -->
                   <div class="form-group col-md-6">
-                    <label class="form-label" >Segundo nombre</label>  
-                    <input type="text" name="segundo_nombre" class="form-control" id="id_segundo_nombre" required>
+                    <label class="form-label font-weight-bold" >Segundo nombre</label>  
+                    <input type="text" name="segundo_nombre" class="form-control" id="id_segundo_nombre" >
                   </div>
                 
                 </div>
@@ -34,7 +34,7 @@ CREAR SUSCRIPTOR
                <div class="row mb-2">
                  <!-- Primer apellido -->
                   <div class="form-group col-md-6">
-                    <label class="form-label" >Primer apellido</label>  
+                    <label class="form-label font-weight-bold" >Primer apellido</label>  
                     <input type="text" name="primer_apellido" class="form-control" id="id_primer_apellido" required>
                    
                   </div>
@@ -42,13 +42,13 @@ CREAR SUSCRIPTOR
                 
                  <!-- Segundo apellido -->
                   <div class="form-group col-md-6">
-                    <label class="form-label" >Segundo apellido</label>  
-                    <input type="text" name="segundo_apellido" class="form-control" id="id_segundo_apellido" required>
+                    <label class="form-label font-weight-bold" >Segundo apellido</label>  
+                    <input type="text" name="segundo_apellido" class="form-control" id="id_segundo_apellido" >
                   </div>
                </div>
 
                 <div class="form-group col-md-6">
-                  <label class="form-label" for="direccion_IMAGEN">Imagen</label>
+                  <label class="form-label font-weight-bold" for="direccion_IMAGEN">Imagen</label>
                   {{ form.direccion_IMAGEN }}
                   <div class="help-text">{{ form.direccion_IMAGEN.errors }}</div>
                   
@@ -56,7 +56,7 @@ CREAR SUSCRIPTOR
               
                 <!-- Barrio -->
                 <div class="form-group">
-                    <label class="form-label" for="barrio">Barrio</label>
+                    <label class="form-label font-weight-bold" for="barrio">Barrio</label>
                     <div class="col-md-4">
                         <select name="{{ form.barrio.name }}" class="form-control">
                             {% for barrio in barrios %}
@@ -69,7 +69,7 @@ CREAR SUSCRIPTOR
 
                 <!-- Estrato socioeconómico -->
                 <div class="form-group">
-                    <label class="form-label" for="Estrato_socioeconomico">Estrato socioeconómico</label>
+                    <label class="form-label font-weight-bold" for="Estrato_socioeconomico">Estrato socioeconómico</label>
                     <div class="col-md-4">
                         <select name="{{ form.Estrato_socioeconomico.name }}" class="form-control">
                             {% for value, label in form.Estrato_socioeconomico.field.choices %}
@@ -82,7 +82,7 @@ CREAR SUSCRIPTOR
 
                 <!-- Uso -->
                 <div class="form-group">
-                    <label class="form-label" for="Uso">Uso</label>
+                    <label class="form-label font-weight-bold" for="Uso">Uso</label>
                     <div class="col-md-4">
                         <select name="{{ form.Uso.name }}" class="form-control">
                             {% for value, label in form.Uso.field.choices %}

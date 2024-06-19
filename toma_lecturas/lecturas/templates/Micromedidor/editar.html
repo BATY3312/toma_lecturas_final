@@ -11,7 +11,7 @@
                 {% csrf_token %}
                 <div class="col-md-4">
                     <div class="form-group">
-                     <label class="form-label">NUID:</label>
+                     <label class="form-label font-weight-bold">NUID:</label>
                      <input type="text" class="form-control {% if formulario.nuid.errors %}is-invalid{% endif %}" name="nuid" value="{{ formulario.nuid.value }}" required> 
                      {% if formulario.nuid.errors %}
                         <div class="invalid-feedback">{{ formulario.nuid.errors|join:", " }}</div>
@@ -20,13 +20,16 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                     <label class="form-label">Medidor:</label>
+                     <label class="form-label font-weight-bold">Medidor:</label>
                      <input type="text" class="form-control {% if formulario.medidor.errors %}is-invalid{% endif %}" name="medidor" value="{{ formulario.medidor.value }}" required>
+                     {% if formulario.medidor.errors %}
+                        <div class="invalid-feedback">{{ formulario.medidor.errors|join:", " }}</div>
+                     {% endif %}
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                     <label class="form-label" for="id_fecha_instalacion">Fecha de Instalación:</label>
+                     <label class="form-label font-weight-bold" for="id_fecha_instalacion">Fecha de Instalación:</label>
                      <input type="date" name="fecha_instalacion" class="form-control {% if formulario.fecha_instalacion.errors %}is-invalid{% endif %}" id="id_fecha_instalacion" value="{{ formulario.fecha_instalacion.value |date:'Y-m-d'}}" required>
                     </div>
                 </div>

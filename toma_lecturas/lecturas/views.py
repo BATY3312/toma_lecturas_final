@@ -85,9 +85,12 @@ def crearmicromedidor(request):
         if formulario.is_valid():
             # Verificar si el valor del campo 'nuid' ya existe en la base de datos
             nuid = formulario.cleaned_data.get('nuid')
+            medidor=formulario.cleaned_data.get('medidor')
             if Micromedidor.objects.filter(nuid=nuid).exists():
                 # Si el 'nuid' ya existe, mostrar un mensaje de error en el formulario
                 formulario.add_error('nuid', 'El NUID ya existe. Por favor ingrese un valor diferente.')
+                if Micromedidor.objects.filter(medidor=medidor).exists():
+                   formulario.add_error('el valor ingresado para micromedidor ya existe, ingresa un valor diferente')
             else:
                 # Guardar el formulario si es válido y el 'nuid' no existe     
                 formulario.save()
@@ -250,6 +253,12 @@ def eliminarsuscriptormicromedidor(request, id):
         return redirect('indexsuscriptorMicromedidor')
     return render(request, 'suscriptorMicromedidor/eliminar.html', {'suscriptor_micromedidor': suscriptor_micromedidor})
 
+####detalles del suscriptor #######
+@login_required
+def detalles_suscriptor(request, id):
+    suscriptor = get_object_or_404(Suscriptor, id=id)
+    return render(request, 'Suscriptor/detalle.html', {'suscriptor': suscriptor})
+
 
 #############################################################################################################
 
@@ -262,16 +271,18 @@ def indexlectura(request):
 
 @login_required
 def crearlectura(request):
+    error_message = None
+
     if request.method == 'POST':
         form = LecturaForm(request.POST)
         if form.is_valid():
             lectura_nueva = form.save(commit=False)
-            
+
             # Obtener la lectura anterior si existe
             suscriptor = lectura_nueva.suscriptor_micromedidor
             lectura_anterior = Lectura.objects.filter(
                 suscriptor_micromedidor=suscriptor
-            ).order_by('-FechaLectura').exclude(id=lectura_nueva.id).first() 
+            ).order_by('-FechaLectura').exclude(id=lectura_nueva.id).first()
 
             if lectura_anterior:
                 lectura_nueva.lectura_anterior = lectura_anterior.lectura_actual
@@ -279,12 +290,18 @@ def crearlectura(request):
             else:
                 # Si no hay lectura anterior, consumototal es igual a la lectura actual
                 lectura_nueva.consumototal = lectura_nueva.lectura_actual
-
-            # Guardar la fecha y hora actual como FechaLectura (auto_now_add=True)
-            lectura_nueva.mes_actual = datetime.now().strftime('%B')
-
-            lectura_nueva.save()
-            return redirect('indexlectura')  
+            
+            # Validar que el consumo total no sea negativo
+            if lectura_nueva.consumototal < 0:
+                error_message = "El consumo total no puede ser negativo. Por favor, revisa los valores ingresados."
+            else:
+                # Guardar la fecha y hora actual como FechaLectura
+                lectura_nueva.FechaLectura = datetime.now()
+                lectura_nueva.mes_actual = datetime.now().strftime('%B')
+                lectura_nueva.save()
+                return redirect('indexlectura')
+        else:
+            error_message = "Error: Suscriptor Micromedidor no encontrado o datos inválidos."
     else:
         # Si es una solicitud GET, inicializa un nuevo formulario
         form = LecturaForm()
@@ -292,30 +309,38 @@ def crearlectura(request):
     # Obtener suscriptores para el formulario
     suscriptores_micromedidores = SuscriptorMicromedidor.objects.all()
 
-    
-
     # Renderizar la plantilla con el formulario y otros datos necesarios
     return render(request, 'Lectura/crear.html', {
         'form': form,
         'suscriptores_micromedidores': suscriptores_micromedidores,
-        
+        'error_message': error_message
     })
+
+
+          
 
 @login_required
 def editarlectura(request, id):
     lectura = get_object_or_404(Lectura, id=id)
+
     if request.method == 'POST':
         form = LecturaForm(request.POST, instance=lectura)
         if form.is_valid():
             lectura = form.save(commit=False)
             lectura.consumototal = lectura.lectura_actual - lectura.lectura_anterior
+
+            if lectura.consumototal < 0:
+                # Mostrar un mensaje de error o manejar la situación de consumo negativo
+                error_message = "El consumo total no puede ser negativo."
+                return render(request, 'Lectura/editar.html', {'form': form, 'lectura': lectura, 'error_message': error_message})
+
             lectura.save()
             return redirect('indexlectura')
     else:
         form = LecturaForm(instance=lectura)
+
     suscriptores_micromedidores = SuscriptorMicromedidor.objects.all()
     return render(request, 'Lectura/editar.html', {'form': form, 'lectura': lectura, 'suscriptores_micromedidores': suscriptores_micromedidores})
-
 @login_required
 def eliminarlectura(request, id):
     lectura = get_object_or_404(Lectura, id=id)
@@ -344,7 +369,13 @@ def obtener_lectura_anterior_api(request, suscriptor_id):
             return JsonResponse({'error': 'No se encontró ninguna lectura anterior para este suscriptor'}, status=404)
     except Exception as e:
         # Manejar cualquier error y devolver una respuesta de error
-        return JsonResponse({'error': str(e)}, status=500)   
+        return JsonResponse({'error': str(e)}, status=500)
+    
+#detalle lectura#
+@login_required
+def detalle_lectura(request, id):
+    lectura = get_object_or_404(Lectura, id=id)
+    return render(request, 'Lectura/detalle.html', {'lectura': lectura})   
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -398,7 +429,7 @@ def verinforme(request):
     )
 
     # Total de micromedidores
-    total_micromedidores = Micromedidor.objects.count()
+    total_micromedidores = Micromedidor.objects.count()+1
 
     # Total de micromedidores con lectura registrada en el mes actual
     total_micromedidores_con_lectura = len(micromedidores_con_lectura)
@@ -468,3 +499,61 @@ def descargar_csv(request):
 
     return response
 
+##########################3 historial por suscriptor #####################################
+
+
+
+def historial_lecturas(request):
+    suscriptores = Suscriptor.objects.all()
+    suscriptor_seleccionado = request.GET.get('suscriptor_id')
+    micromedidor_seleccionado = request.GET.get('micromedidor_id')
+    year_seleccionado = request.GET.get('year')
+    historial = []
+    error_message = None
+    micromedidores = []
+
+    if suscriptor_seleccionado:
+        suscriptor = get_object_or_404(Suscriptor, id=suscriptor_seleccionado)
+        suscriptor_micromedidores = SuscriptorMicromedidor.objects.filter(suscriptor=suscriptor)
+        micromedidores = [sm.micromedidor for sm in suscriptor_micromedidores]
+        
+        if micromedidor_seleccionado:
+            micromedidores = [m for m in micromedidores if str(m.id) == micromedidor_seleccionado]
+
+        lecturas_por_suscriptor = []
+        for micromedidor in micromedidores:
+            suscriptor_micromedidor = SuscriptorMicromedidor.objects.get(suscriptor=suscriptor, micromedidor=micromedidor)
+            lecturas = Lectura.objects.filter(suscriptor_micromedidor=suscriptor_micromedidor)
+            if year_seleccionado:
+                lecturas = lecturas.filter(FechaLectura__year=year_seleccionado)
+            lecturas = lecturas.order_by('-FechaLectura')
+
+            if lecturas.exists():
+                lecturas_por_suscriptor.append({
+                    'suscriptor_micromedidor': suscriptor_micromedidor,
+                    'lecturas': lecturas
+                })
+
+        if lecturas_por_suscriptor:
+            historial.append({
+                'suscriptor': suscriptor,
+                'lecturas_por_suscriptor': lecturas_por_suscriptor
+            })
+        else:
+            error_message = "No hay lecturas registradas para este suscriptor y criterios seleccionados."
+
+    current_year = datetime.now().year
+    years = list(range(current_year - 10, current_year + 1))
+
+    context = {
+        'suscriptores': suscriptores,
+        'historial': historial,
+        'suscriptor_seleccionado': suscriptor_seleccionado,
+        'micromedidor_seleccionado': micromedidor_seleccionado,
+        'year_seleccionado': year_seleccionado,
+        'years': years,
+        'error_message': error_message,
+        'micromedidores': micromedidores
+    }
+
+    return render(request, 'informe/historial_lecturas.html', context)

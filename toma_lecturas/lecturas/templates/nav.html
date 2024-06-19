@@ -5,17 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Base Template{% endblock %}</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/lay.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/suscriptor_micromedidor/styles.css' %}">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <img src="{% static 'img/logotipo.png' %}" width="200" height="130" class="d-inline-block align-top" alt="">
+                <img src="{% static 'img/logotipo.png' %}" width="100" class="d-inline-block align-top" alt="">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,11 +37,14 @@
                             <a class="nav-link text-dark" href="{% url 'indexmicromedidor' %}">Micromedidor</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="{% url 'indexsuscriptorMicromedidor' %}">Usuario y Micromedidor</a>
+                            <a class="nav-link text-dark" href="{% url 'indexsuscriptorMicromedidor' %}">Propietario Micromedidor</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="{% url 'informe' %}">Ver reportes</a> 
+                            <a class="nav-link text-dark" href="{% url 'informe' %}">Reportes</a> 
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'historial_lecturas' %}">Historial lecturas</a> 
+                          </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" href="{% url 'exit' %}">Salir</a>
                         </li>
@@ -60,7 +62,11 @@
         {% block content %}
         {% endblock %}
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </body>
 </html>

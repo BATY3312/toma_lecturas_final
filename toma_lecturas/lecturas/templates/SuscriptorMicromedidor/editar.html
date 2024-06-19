@@ -8,25 +8,67 @@
    <div class="card text-start">
     <div class="card-body">
         <h4 class="card-title">Editar Suscriptor de Micromedidor</h4>
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="mb-3">
             <form enctype="multipart/form-data" method="post">
                 {% csrf_token %}
                 <div class="form-group col-md-4">
                     <label class="form-label">Suscriptor:</label>
-                    <select name="suscriptor" class="form-control">
-                        {% for suscriptor in suscriptores %}
-                            <option value="{{ suscriptor.id }}" {% if suscriptor.id == form.instance.suscriptor.id %} selected {% endif %}>{{ suscriptor.primer_nombre }} {{suscriptor.segundo_nombre}}</option>
-                        {% endfor %}
-                    </select> 
+                    <input type="text" id="suscriptor_search" class="form-control" placeholder="Buscar suscriptor..." value="{{ form.instance.suscriptor.primer_nombre }} {{ form.instance.suscriptor.segundo_nombre }} {{ form.instance.suscriptor.primer_apellido }}" oninput="filtrarSuscriptores()">
+                    <div class="dropdown" style="position: relative;">
+                        <select name="suscriptor" class="form-control mt-2" id="id_suscriptor" size="5" style="display: none;">
+                            {% for suscriptor in suscriptores %}
+                            <option value="{{ suscriptor.id }}" {% if suscriptor.id == form.instance.suscriptor.id %}selected{% endif %}>
+                                {{ suscriptor.primer_nombre }} {{ suscriptor.segundo_nombre }} {{ suscriptor.primer_apellido }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div id="suscriptor_dropdown" class="dropdown-menu" style="width: 100%; max-height: 200px; overflow-y: auto;">
+                            {% for suscriptor in suscriptores %}
+                                <div class="dropdown-item" data-value="{{ suscriptor.id }}">
+                                    {{ suscriptor.primer_nombre }} {{ suscriptor.segundo_nombre }} {{ suscriptor.primer_apellido }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group col-md-4">
                     <label class="form-label">Micromedidor:</label>
-                    <select name="micromedidor" class="form-control">
-                        {% for micromedidor in micromedidores %}
-                            <option value="{{ micromedidor.id }}" {% if micromedidor.id == form.instance.micromedidor.id %} selected {% endif %}>{{ micromedidor.medidor }}</option>
-                        {% endfor %}
-                    </select>
+                    <input type="text" id="micromedidor_search" class="form-control" placeholder="Buscar micromedidor..." value="{{ form.instance.micromedidor.medidor }}" oninput="filtrarMicromedidores()">
+                    <div class="dropdown" style="position: relative;">
+                        <select name="micromedidor" class="form-control mt-2" id="id_micromedidor" size="5" style="display: none;">
+                            {% for micromedidor in form.fields.micromedidor.queryset %}
+                            <option value="{{ micromedidor.id }}" {% if micromedidor.id == form.instance.micromedidor.id %}selected{% endif %}>
+                                {{ micromedidor.medidor }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div id="micromedidor_dropdown" class="dropdown-menu" style="width: 100%; max-height: 200px; overflow-y: auto;">
+                            {% for micromedidor in form.fields.micromedidor.queryset %}
+                                <div class="dropdown-item" data-value="{{ micromedidor.id }}">
+                                    {{ micromedidor.medidor }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if form.micromedidor.errors %}
+                        <div class="text-danger">{{ form.micromedidor.errors }}</div>
+                    {% endif %}
                 </div>
+                {% if form.non_field_errors %}
+                    <div class="text-danger">{{ form.non_field_errors }}</div>
+                {% endif %}
                 <div class="form-group col-md-4">
                     <button type="submit" class="btn btn-primary">Guardar cambios</button>
                 </div>
@@ -36,4 +78,77 @@
   </div>
  </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function setupDropdownSearch(inputId, dropdownId, selectId) {
+            const searchInput = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            const select = document.getElementById(selectId);
+            
+            searchInput.addEventListener('input', function() {
+                const filter = searchInput.value.toLowerCase();
+                const items = dropdown.getElementsByClassName('dropdown-item');
+                let hasVisibleItems = false;
+
+                for (const item of items) {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(filter)) {
+                        item.style.display = '';
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+
+                dropdown.style.display = hasVisibleItems ? 'block' : 'none';
+            });
+
+            dropdown.addEventListener('click', function(event) {
+                if (event.target && event.target.matches('.dropdown-item')) {
+                    const selectedValue = event.target.getAttribute('data-value');
+                    const options = select.options;
+
+                    for (const option of options) {
+                        if (option.value == selectedValue) {
+                            option.selected = true;
+                            break;
+                        }
+                    }
+
+                    searchInput.value = event.target.textContent;
+                    dropdown.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function(event) {
+                const isClickInside = searchInput.contains(event.target) || dropdown.contains(event.target);
+                if (!isClickInside) {
+                    dropdown.style.display = 'none';
+                }
+            });
+
+            searchInput.addEventListener('focus', function() {
+                const filter = searchInput.value.toLowerCase();
+                const items = dropdown.getElementsByClassName('dropdown-item');
+                let hasVisibleItems = false;
+
+                for (const item of items) {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(filter)) {
+                        item.style.display = '';
+                        hasVisibleItems = true;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                }
+
+                dropdown.style.display = hasVisibleItems ? 'block' : 'none';
+            });
+        }
+
+        setupDropdownSearch('suscriptor_search', 'suscriptor_dropdown', 'id_suscriptor');
+        setupDropdownSearch('micromedidor_search', 'micromedidor_dropdown', 'id_micromedidor');
+    });
+</script>
 {% endblock %}

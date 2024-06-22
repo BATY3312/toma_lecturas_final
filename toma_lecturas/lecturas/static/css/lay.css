@@ -1,58 +1,61 @@
-/* Navbar Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 .navbar {
-    background-color: #f8f9fa !important; /* Light grey background for a subtle look */
-    border-bottom: 1px solid #dee2e6; /* Add a subtle border at the bottom */
+    background-color: #e7f1fc !important;
+    border-bottom: 1px solid #dee2e6; 
+    font-family: 'Roboto', sans-serif;
 }
 
 .navbar-brand img {
-    margin-right: 15px; /* Slightly increased space between the logo and text */
+    margin-right: 15px; 
 }
 
 .nav-item {
-    margin-left: 20px; /* Increased margin for better spacing */
+    margin-left: 10px; 
 }
 
 .nav-link {
-    color: #343a40 !important; /* Dark grey text for a modern look */
-    transition: color 0.3s ease; /* Smooth transition for color change */
+    color: #343a40 !important; 
+    transition: color 0.3s ease; 
 }
 
 .nav-link:hover {
-    color: #007bff !important; /* Blue color on hover for better visibility */
+    color: #007bff !important; 
 }
 
 /* User Info Styles */
 .navbar-text {
-    color: #343a40 !important; /* Ensure the user text is dark grey */
+    color: #343a40 !important; 
     display: flex;
     align-items: center;
-    padding: 5px 15px; /* Increased padding for a more comfortable look */
-    background-color: #e9ecef; /* Light background for the user info section */
-    border-radius: 5px; /* Rounded corners for a modern touch */
+    padding: 5px 15px; 
+    background-color: #e9ecef; 
+    border-radius: 5px; 
 }
 
 .navbar-text i {
-    margin-right: 8px; /* Increased space between the icon and the username */
-    color: #007bff; /* Blue icon for a consistent theme */
+    margin-right: 8px; 
+    color: #007bff;
 }
 
-/* General Container Styling */
+
 .full-width-container {
-    min-height: 100vh; /* Ensure the body takes full height */
+    background-color: #f0f8ff;
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
 }
 
 .content-container {
-    flex: 1; /* Ensure header and footer stay in place while content grows */
+    flex: 1; 
 }
 
-/* Footer Styles */
+
 footer {
-    background-color: #f8f9fa; /* Light grey background to match the navbar */
-    padding: 15px 0; /* Padding for a more spacious footer */
-    text-align: center; /* Centered text for a clean look */
-    border-top: 1px solid #dee2e6; /* Subtle border to separate from main content */
+    background-color: #f8f9fa; 
+    padding: 15px 0; 
+    text-align: center; 
+    border-top: 1px solid #dee2e6; 
 }
 
 /* Responsive Adjustments */

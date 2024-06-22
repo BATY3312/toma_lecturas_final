@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'toma_lecturas.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'app_toma_lecturas',
+        'NAME': 'aguasmoc_app_toma_lecturas',
         'USER': 'root',
         'PASSWORD':'123456',
         'HOST':'localhost',

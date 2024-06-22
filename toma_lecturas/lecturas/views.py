@@ -166,7 +166,7 @@ def crearsuscriptor(request):
 
 def editarsuscriptor(request, id):
     suscriptor = get_object_or_404(Suscriptor, id=id)
-    
+    es_tecnico = request.user.groups.filter(name='Tecnico_Operativo').exists()
     if request.method == 'POST':
         formulario = SuscriptorForm(request.POST,  request.FILES,instance=suscriptor)
         if formulario.is_valid():
@@ -178,7 +178,7 @@ def editarsuscriptor(request, id):
     # Obtener todos los barrios disponibles
     barrios = Barrio.objects.all()
 
-    return render(request, 'Suscriptor/editar.html', {'formulario': formulario, 'barrios': barrios})
+    return render(request, 'Suscriptor/editar.html', {'formulario': formulario, 'barrios': barrios  ,'es_tecnico': es_tecnico})
 
 @login_required
 @administrador_or_area_comercial_required
@@ -462,6 +462,7 @@ def verinforme(request):
 import csv
 from django.http import HttpResponse 
 @login_required
+@administrador_or_area_comercial_required
 def descargar_csv(request):
     # Crear la respuesta con tipo de contenido 'text/csv'
     response = HttpResponse(content_type='text/csv')
